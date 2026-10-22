@@ -15,7 +15,7 @@ Se ele disser sim (ou já tiver pedido "atualiza no github", "publica", "sobe"),
    - mudança que quebra compatibilidade → `3.0.0` (confirme com ele antes)
    Se a versão não for alterada, nenhuma release é gerada.
 2. Em `jpx-eventos.php`, altere `Version:` no cabeçalho **e** `JPX_EV_VERSION` (os dois iguais). Se o esquema da tabela mudou, aumente `JPX_EV_DB_VERSION`.
-3. Em `readme.txt`, atualize `Stable tag:`.
+3. Em `readme.txt`, atualize a linha `Versão:`.
 4. No topo de `changelog.txt`, adicione a entrada no formato existente:
    ```
    2.1.1 — DD/MM/AAAA
