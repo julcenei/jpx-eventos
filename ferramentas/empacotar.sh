@@ -8,5 +8,5 @@ SAIDA="$(cd .. && pwd)/jpx-eventos-$VERSAO.zip"
 rm -f "$SAIDA"
 cd ..
 zip -qr "$SAIDA" "$(basename "$OLDPWD")" \
-  -x '*/.git/*' '*/.gitignore' '*/.gitattributes' '*/ferramentas/*' '*/manual/fonte.html' '*/README.md' '*.DS_Store'
+  -x '*/.git/*' '*/.gitignore' '*/.gitattributes' '*/ferramentas/*' '*/.github/*' '*/manual/fonte.html' '*/README.md' '*.DS_Store'
 echo "Gerado: $SAIDA"

@@ -26,9 +26,11 @@ sh ferramentas/empacotar.sh
 
 ## Nova versão
 
-1. Altere `Version:` e `JPX_EV_VERSION` em `jpx-eventos.php`.
-2. Registre em `changelog.txt`.
+1. Altere `Version:` e `JPX_EV_VERSION` em `jpx-eventos.php` (os dois iguais).
+2. Registre em `changelog.txt`, no topo, começando a linha com o número da versão.
 3. Se o esquema da tabela mudar, aumente `JPX_EV_DB_VERSION`.
-4. Gere o .zip e crie a *release* com ele anexado.
+4. Envie para a `main`.
+
+A automação em `.github/workflows/release.yml` confere a versão, gera o .zip, cria a tag `vX.Y.Z` e publica a *release* com as notas do changelog. Se algo estiver faltando (versões diferentes, changelog sem a entrada), ela para e avisa na aba **Actions**. Para rodar de novo sem mudar nada, use **Actions › Release › Run workflow**.
 
 Licença: proprietária — Jotapix Agência Criativa.

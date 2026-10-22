@@ -1,0 +1,72 @@
+# Publica uma release sempre que a versão do jpx-eventos.php mudar na main.
+# Passos para lançar: altere a versão (cabeçalho + JPX_EV_VERSION), registre no
+# changelog.txt e envie para a main. O resto acontece aqui.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths: [jpx-eventos.php]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ler e conferir a versão
+        id: versao
+        run: |
+          CABECALHO=$(sed -n 's/^ \* Version:[[:space:]]*\([^[:space:]]*\).*/\1/p' jpx-eventos.php)
+          CONSTANTE=$(sed -n "s/.*define( 'JPX_EV_VERSION', '\([^']*\)' );.*/\1/p" jpx-eventos.php)
+          echo "Cabeçalho: $CABECALHO | JPX_EV_VERSION: $CONSTANTE"
+          if [ -z "$CABECALHO" ] || [ "$CABECALHO" != "$CONSTANTE" ]; then
+            echo "::error file=jpx-eventos.php::A versão do cabeçalho ($CABECALHO) e a JPX_EV_VERSION ($CONSTANTE) precisam ser iguais."
+            exit 1
+          fi
+          echo "versao=$CABECALHO" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$CABECALHO" >/dev/null; then
+            echo "A tag v$CABECALHO já existe — nada a publicar."
+            echo "publicar=nao" >> "$GITHUB_OUTPUT"
+          else
+            echo "publicar=sim" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notas da versão (changelog.txt)
+        if: steps.versao.outputs.publicar == 'sim'
+        run: |
+          V=${{ steps.versao.outputs.versao }}
+          sh ferramentas/notas-versao.sh "$V" > notas.md
+          if [ ! -s notas.md ]; then
+            echo "::error file=changelog.txt::Não há entrada para a versão $V no changelog.txt."
+            exit 1
+          fi
+          printf '\nInstalação: baixe o jpx-eventos-%s.zip abaixo e envie em Plugins › Adicionar novo › Enviar plugin.\n' "$V" >> notas.md
+          cat notas.md
+
+      - name: Gerar o .zip
+        if: steps.versao.outputs.publicar == 'sim'
+        run: |
+          sh ferramentas/empacotar.sh
+          ZIP="$(cd .. && pwd)/jpx-eventos-${{ steps.versao.outputs.versao }}.zip"
+          unzip -l "$ZIP" | tail -1
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+
+      - name: Criar tag e release
+        if: steps.versao.outputs.publicar == 'sim'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=${{ steps.versao.outputs.versao }}
+          gh release create "v$V" "$ZIP" \
+            --target "$GITHUB_SHA" \
+            --title "JPX Eventos $V" \
+            --notes-file notas.md
