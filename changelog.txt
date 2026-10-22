@@ -1,0 +1,28 @@
+2.1.0 — 22/10/2026
+- Guia visual dentro do plugin (Eventos › Ajuda), com capturas anotadas e animações.
+- Quadro "Primeiros passos" nas telas da agenda, com progresso (pode ser ocultado).
+- Botões "?" com dicas curtas nos passos do cadastro, no calendário e nas configurações,
+  levando direto ao trecho do guia.
+- Criação rápida no calendário já vem com o local padrão marcado.
+
+2.0.1 — 22/10/2026
+- [jpx_eventos] e [eventos_home]: quando não há eventos futuros, mostram os últimos realizados
+  (com a tarja "Encerrado") em vez de uma seção vazia. Para só o aviso: se_vazio="mensagem".
+
+2.0.0 — 22/10/2026
+- Novo nome: JPX Eventos (sucessor do Eventos JPX 1.x). Desativa o antigo automaticamente.
+- Campos nativos (sem ACF), mantendo as chaves antigas: nenhum evento precisa ser recadastrado.
+- Migração: backup dos campos, conversão dos horários escritos à mão, aviso dos não convertidos.
+- Agenda: lista (próximos/anteriores, destaque do próximo evento, carregar mais), calendário mensal,
+  busca, filtros por tipo e núcleo, sem recarregar a página.
+- Modal do calendário; calendário vira lista no celular; feriados nacionais.
+- Página do evento: painel com data/local/inscrição, programação, próximas datas, mapa sob demanda,
+  Google/Outlook/.ics, WhatsApp, eventos relacionados, Schema.org.
+- Recorrência (diária, semanal, mensal por dia ou posição) com exceções por data.
+- Tipos e núcleos com cor; locais salvos; público e valor.
+- Painel: cadastro em 4 passos com prévia ao vivo, calendário com criação rápida e arrastar,
+  duplicar evento, colunas de data/local, configurações de identidade visual.
+- Corrigido (vs 1.x): eventos de vários dias sumiam no 2º dia; eventos do dia sumiam às 21h (fuso);
+  tarja "Encerrado" não aparecia; página da agenda ficava em branco sem eventos futuros.
+
+1.x — versões anteriores (Eventos JPX).

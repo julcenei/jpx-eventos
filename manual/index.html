@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia do JPX Eventos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&amp;family=Figtree:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<style>
+/* Layout: guia de campo — índice fixo à esquerda, coluna de leitura com capturas anotadas (letras laranja = marcações nas imagens). */
+:root{
+  --bg:#F4F7F6; --surface:#FFFFFF; --ink:#14211D; --muted:#4E5E58; --line:#D9E2DE;
+  --accent:#0B6E5A; --accent-soft:#E2F1EC; --mark:#C2410C; --mark-soft:#FDECDF; --code:#EEF3F1;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1513; --surface:#151F1C; --ink:#E4EDEA; --muted:#A3B5AE; --line:#2B3B36;
+  --accent:#5CC9AC; --accent-soft:#16332C; --mark:#FF8F57; --mark-soft:#3A2419; --code:#1C2925; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#151F1C; --ink:#E4EDEA; --muted:#A3B5AE; --line:#2B3B36;
+  --accent:#5CC9AC; --accent-soft:#16332C; --mark:#FF8F57; --mark-soft:#3A2419; --code:#1C2925; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3{font-family:var(--display);line-height:1.15;letter-spacing:-.015em;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,52px);font-weight:700}
+h2{font-size:clamp(26px,3.4vw,34px);font-weight:700}
+h3{font-size:21px;font-weight:600}
+p{margin:0}
+code,kbd{font-family:var(--mono);font-size:.84em}
+code{background:var(--code);padding:2px 6px;border-radius:6px;white-space:nowrap}
+kbd{display:inline-block;padding:1px 7px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--surface)}
+
+.pagina{display:grid;grid-template-columns:250px minmax(0,1fr);gap:56px;max-width:1180px;margin:0 auto;padding-block:40px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Índice */
+.indice{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding-right:8px}
+.indice__marca{display:flex;align-items:center;gap:10px;margin-bottom:20px;font:700 16px/1 var(--display)}
+.indice__marca i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--surface);font-style:normal;font-size:15px}
+.indice ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:cap}
+.indice li{counter-increment:cap}
+.indice a{display:flex;gap:10px;padding:7px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;line-height:1.35}
+.indice a::before{content:counter(cap);min-width:18px;font:600 13px/1.6 var(--mono);color:var(--accent)}
+.indice a:hover{background:var(--accent-soft);color:var(--ink)}
+.indice a[aria-current="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.indice .anexo a::before{content:"+"}
+.indice details summary{display:none}
+
+/* Conteúdo */
+main{min-width:0;display:flex;flex-direction:column;gap:72px}
+.capa{display:flex;flex-direction:column;gap:18px;padding-bottom:8px}
+.chamada{font:600 13px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.capa p.lede{font-size:20px;color:var(--muted);max-width:62ch}
+.fatos{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.fato{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:12px;background:var(--surface);border:1px solid var(--line);min-width:0;flex:1 1 200px}
+.fato strong{font:700 22px/1.2 var(--display)}
+.fato span{font-size:14px;color:var(--muted)}
+
+section{display:flex;flex-direction:column;gap:20px}
+section > p,section > ul,section > ol:not(.passos):not(.legenda){max-width:66ch}
+section h2{display:flex;align-items:baseline;gap:14px}
+section h2 small{font:600 14px/1 var(--mono);color:var(--accent)}
+.sub{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+ul,ol{margin:0;padding-left:1.25em}
+li+li{margin-top:6px}
+
+/* Passos numerados (sequência real) */
+.passos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;counter-reset:p;max-width:68ch}
+.passos > li{counter-increment:p;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;margin:0}
+.passos > li::before{content:counter(p);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--surface);font:700 16px/1 var(--display)}
+.passos > li > div > strong:first-child{display:block}
+
+/* Figuras anotadas */
+figure{margin:0;display:flex;flex-direction:column;gap:12px}
+.quadro{display:block;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 30px rgba(20,33,29,.06)}
+.quadro img{width:100%}
+figure.estreita{max-width:620px}
+figcaption{font-size:15px;color:var(--muted)}
+.legenda{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-width:72ch}
+.legenda li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;margin:0;font-size:16px}
+.legenda b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--mark);color:#fff;font:700 13px/1 var(--body);margin-top:1px}
+.dupla{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.dupla--celular{grid-template-columns:repeat(2,minmax(0,280px));justify-content:start}
+.selo-anim{align-self:flex-start;font:600 12px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--mark);background:var(--mark-soft);padding:6px 10px;border-radius:999px}
+
+/* Avisos */
+.nota{display:flex;flex-direction:column;gap:6px;padding:16px 20px;border-radius:12px;background:var(--accent-soft);max-width:70ch}
+.nota strong{font-weight:700}
+.nota--atencao{background:var(--mark-soft)}
+
+/* Perguntas */
+details.pergunta{border-bottom:1px solid var(--line);padding:14px 0;max-width:72ch}
+details.pergunta summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+details.pergunta summary::after{content:"+";color:var(--accent);font:600 20px/1 var(--mono)}
+details.pergunta[open] summary::after{content:"−"}
+details.pergunta p{margin-top:10px;color:var(--muted)}
+
+/* Tabela */
+.tabela{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+
+.rodape{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:20px}
+
+@media (max-width:960px){
+  .pagina{grid-template-columns:minmax(0,1fr);gap:28px;padding-block:20px 72px}
+  .indice{position:static;max-height:none;padding:0}
+  .indice details{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:6px 10px}
+  .indice details summary{display:block;cursor:pointer;padding:8px 4px;font-weight:600}
+  main{gap:56px}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .dupla{grid-template-columns:minmax(0,1fr)}
+  .dupla--celular{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+
+<div class="pagina">
+  <nav class="indice" aria-label="Índice do guia">
+    <div class="indice__marca"><i aria-hidden="true">J</i>JPX Eventos</div>
+    <details open>
+      <summary>Índice do guia</summary>
+      <ol>
+        <li><a href="#visao-geral">Onde fica tudo</a></li>
+        <li><a href="#primeiro-evento">Publicar um evento</a></li>
+        <li><a href="#repeticao">Eventos que se repetem</a></li>
+        <li><a href="#varios-dias">Vários dias e dia inteiro</a></li>
+        <li><a href="#descricao">Descrição e programação</a></li>
+        <li><a href="#calendario-painel">Criar pelo calendário</a></li>
+        <li><a href="#duplicar">Duplicar e agendar</a></li>
+        <li><a href="#locais">Locais, tipos e núcleos</a></li>
+        <li><a href="#no-site">O que o visitante vê</a></li>
+        <li><a href="#configuracoes">Configurações</a></li>
+        <li><a href="#perguntas">Perguntas frequentes</a></li>
+        <li class="anexo"><a href="#implantacao">Para a agência</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <main>
+    <header class="capa">
+      <span class="chamada">Guia de uso</span>
+      <h1>Como publicar e cuidar da agenda do site</h1>
+      <p class="lede">Este guia mostra, tela por tela, como cadastrar eventos, cuidar das reuniões que se repetem e conferir como tudo aparece para quem visita o site.</p>
+      <div class="fatos">
+        <div class="fato"><strong>4 passos</strong><span>para publicar um evento completo</span></div>
+        <div class="fato"><strong>1 clique + Enter</strong><span>para criar direto no calendário</span></div>
+        <div class="fato"><strong>Painel › Eventos</strong><span>onde fica tudo no WordPress</span></div>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section id="visao-geral">
+      <h2><small>01</small>Onde fica tudo</h2>
+      <p>Entre no painel do WordPress do seu site. No menu da esquerda, clique em <strong>Eventos</strong>. Ali estão o calendário, a lista de eventos, o botão de novo evento e este guia, em <strong>Ajuda</strong>.</p>
+      <figure>
+        <a class="quadro" href="img/painel-inicio.webp" target="_blank" rel="noopener"><img src="img/painel-inicio.webp" width="1600" height="694" alt="Menu Eventos no painel do WordPress e o quadro Primeiros passos"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>O menu <strong>Eventos</strong>: Calendário, Todos os eventos, Novo evento, Tipos, Núcleos, Locais salvos, Configurações e Ajuda.</span></li>
+          <li><b>B</b><span><strong>Primeiros passos</strong>: uma lista que aparece no começo e some sozinha quando tudo estiver pronto. Cada cartão leva direto para a tela certa.</span></li>
+        </ol>
+      </figure>
+      <div class="nota"><strong>Dica</strong><p>Viu um botão <strong>?</strong> ao lado de um campo? Clique nele para ver uma explicação curta e um link para o trecho deste guia.</p></div>
+    </section>
+
+    <!-- 2 -->
+    <section id="primeiro-evento">
+      <h2><small>02</small>Publicar um evento em 4 passos</h2>
+      <p>Clique em <strong>Eventos › Novo evento</strong>. A tela é dividida em quatro blocos numerados, na ordem em que você pensa num evento: o quê, quando, onde e como se inscrever.</p>
+      <figure>
+        <a class="quadro" href="img/cadastro-4-passos.webp" target="_blank" rel="noopener"><img src="img/cadastro-4-passos.webp" width="1600" height="1403" alt="Tela de novo evento com os quatro passos e a prévia do card"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Nome do evento, do jeito que deve aparecer no site.</span></li>
+          <li><b>B</b><span><strong>Como vai aparecer no site</strong>: a prévia do card muda enquanto você preenche. Os três itens com ✓ mostram o que falta.</span></li>
+          <li><b>C</b><span><strong>Publicar</strong>. O evento entra na agenda na hora. Atalho: <kbd>Ctrl</kbd> + <kbd>Enter</kbd>.</span></li>
+        </ol>
+      </figure>
+
+      <ol class="passos">
+        <li id="passo-o-que"><div><strong>O quê: tipo e núcleo</strong>Escolha o tipo (Palestra, Reunião, Curso, Encontro…). O tipo define a cor do evento na agenda. O núcleo é opcional e liga o evento a um grupo, que vira filtro no site.</div></li>
+        <li id="passo-quando"><div><strong>Quando: data e horário</strong>Escolha a data e o horário de início. O término é preenchido sozinho com 2 horas de duração; ajuste se precisar. Se o evento se repete, veja o <a href="#repeticao">capítulo 3</a>.</div></li>
+        <li id="passo-onde"><div><strong>Onde: um clique no local</strong>Clique num dos locais salvos. O endereço aparece logo abaixo e o link do mapa é criado sozinho. Para um lugar novo, use <strong>+ Outro local</strong> (veja abaixo).</div></li>
+        <li id="passo-inscricao"><div><strong>Inscrição (opcional)</strong>Cole o link do formulário (Google Forms, Sympla, WhatsApp…). O site mostra o botão <strong>Inscrever-se</strong> e o tira sozinho quando o evento termina. Marque também o valor e o público.</div></li>
+      </ol>
+
+      <div class="sub">
+        <h3>Um local que ainda não está salvo</h3>
+        <p>Clique em <strong>+ Outro local</strong> e preencha nome, endereço e cidade. Deixe marcado <strong>Salvar este local</strong> para ele aparecer como opção nos próximos eventos.</p>
+        <figure>
+          <a class="quadro" href="img/novo-local.webp" target="_blank" rel="noopener"><img src="img/novo-local.webp" width="1600" height="487" alt="Passo Onde com o formulário de novo local aberto"></a>
+          <ol class="legenda">
+            <li><b>A</b><span><strong>+ Outro local</strong> abre os campos de nome, endereço e cidade.</span></li>
+            <li><b>B</b><span>Marque para reaproveitar o local depois.</span></li>
+          </ol>
+        </figure>
+      </div>
+
+      <div class="sub">
+        <h3>As dicas “?”</h3>
+        <figure class="estreita">
+          <a class="quadro" href="img/dica.webp" target="_blank" rel="noopener"><img src="img/dica.webp" width="1600" height="416" alt="Balão de ajuda aberto ao lado do passo Onde"></a>
+          <ol class="legenda"><li><b>A</b><span>Clique no <strong>?</strong> para abrir a explicação. Clique fora ou aperte <kbd>Esc</kbd> para fechar.</span></li></ol>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="repeticao">
+      <h2><small>03</small>Eventos que se repetem</h2>
+      <p>Reuniões de núcleo, cafés mensais, aulas semanais: cadastre <strong>uma vez só</strong>. No passo <strong>Quando</strong>, abra o campo <strong>Repetição</strong>. As opções já vêm prontas a partir da data escolhida, por exemplo “Todo mês, na última quinta-feira”.</p>
+      <figure>
+        <a class="quadro" href="img/repeticao.webp" target="_blank" rel="noopener"><img src="img/repeticao.webp" width="1600" height="1200" alt="Campo Repetição com a regra mensal e a lista das próximas datas"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Escolha a repetição. Se nenhuma opção servir, use <strong>Personalizar…</strong> (a cada 2 semanas, dias específicos, dia fixo do mês).</span></li>
+          <li><b>B</b><span><strong>Termina</strong>: nunca, numa data ou depois de um número de vezes.</span></li>
+          <li><b>C</b><span>O resumo da regra, em português, com o total de datas.</span></li>
+          <li><b>D</b><span>As próximas datas, cada uma com <strong>Alterar</strong> e <strong>Cancelar esta data</strong>.</span></li>
+        </ol>
+      </figure>
+
+      <div class="sub" id="excecoes">
+        <h3>Cancelar ou mudar só uma data</h3>
+        <p>Feriado, recesso ou encontro na empresa de um associado? Na lista de datas:</p>
+        <ul>
+          <li><strong>Cancelar esta data</strong>: a data some da agenda e aparece riscada como “Cancelada” na página do evento.</li>
+          <li><strong>Alterar</strong>: informe outro local, outro horário ou um aviso só para aquele dia.</li>
+          <li><strong>Restaurar</strong> desfaz a mudança.</li>
+        </ul>
+        <figure>
+          <a class="quadro" href="img/excecoes.webp" target="_blank" rel="noopener"><img src="img/excecoes.webp" width="1600" height="669" alt="Lista de datas com uma data alterada e outra cancelada"></a>
+          <ol class="legenda">
+            <li><b>A</b><span>Data com local diferente. No site aparece o aviso “nesta data o encontro será em…”.</span></li>
+            <li><b>B</b><span>Data cancelada. As outras continuam normais.</span></li>
+          </ol>
+        </figure>
+        <div class="nota nota--atencao"><strong>Lembre de clicar em Atualizar</strong><p>As mudanças nas datas só valem depois que você salva o evento.</p></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="varios-dias">
+      <h2><small>04</small>Vários dias e dia inteiro</h2>
+      <p>Cursos de três noites, feiras e congressos: marque <strong>Vários dias</strong> e escolha a data final. No calendário do site o evento aparece em cada dia, como “1/3”, “2/3” e “3/3”. Marque <strong>Dia inteiro</strong> quando não houver horário definido.</p>
+      <figure>
+        <a class="quadro" href="img/varios-dias.webp" target="_blank" rel="noopener"><img src="img/varios-dias.webp" width="1600" height="304" alt="Opções Vários dias e Dia inteiro com a data final"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>As duas opções.</span></li>
+          <li><b>B</b><span>A data final aparece quando “Vários dias” está marcado.</span></li>
+        </ol>
+      </figure>
+    </section>
+
+    <!-- 5 -->
+    <section id="descricao">
+      <h2><small>05</small>Descrição, resumo, programação e imagem</h2>
+      <p>No fim da tela, abra <strong>Descrição, resumo e programação</strong>. Tudo ali é opcional, mas deixa a página do evento mais completa.</p>
+      <figure>
+        <a class="quadro" href="img/descricao.webp" target="_blank" rel="noopener"><img src="img/descricao.webp" width="1600" height="1364" alt="Editor de descrição, campo de resumo e campo de programação"></a>
+        <ol class="legenda">
+          <li><b>A</b><span><strong>Descrição completa</strong>: texto livre, com negrito, listas e links.</span></li>
+          <li><b>B</b><span><strong>Resumo</strong>: uma ou duas frases. Aparece no card, no modal do calendário e no Google.</span></li>
+          <li><b>C</b><span><strong>Programação</strong>: uma linha por item, começando pelo horário (ex.: <code>18:30 Credenciamento</code>).</span></li>
+        </ol>
+      </figure>
+      <p><strong>Imagem:</strong> use o quadro <strong>Imagem destacada</strong>, na coluna da direita. Sem imagem, o site gera uma capa com a cor do tipo e o dia do evento, então nenhum evento fica “sem foto”.</p>
+    </section>
+
+    <!-- 6 -->
+    <section id="calendario-painel">
+      <h2><small>06</small>Criar e mover pelo calendário</h2>
+      <p>Em <strong>Eventos › Calendário</strong> você vê o mês inteiro. É o jeito mais rápido de cadastrar.</p>
+      <figure>
+        <a class="quadro" href="img/calendario-painel.webp" target="_blank" rel="noopener"><img src="img/calendario-painel.webp" width="1600" height="1136" alt="Calendário de eventos no painel"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Mês anterior, próximo mês e <strong>Hoje</strong>.</span></li>
+          <li><b>B</b><span>Clique num espaço vazio do dia para criar um evento ali.</span></li>
+          <li><b>C</b><span>Clique num evento para editar, duplicar ou ver no site. O símbolo ↻ indica evento recorrente.</span></li>
+        </ol>
+      </figure>
+
+      <div class="sub">
+        <h3>Criação rápida</h3>
+        <ol class="passos">
+          <li><div><strong>Clique no dia</strong>Abre um quadrinho já com a data certa.</div></li>
+          <li><div><strong>Digite o nome</strong>Horário, tipo, local e repetição são opcionais.</div></li>
+          <li><div><strong>Aperte Enter</strong>O evento é publicado e aparece no calendário na hora.</div></li>
+        </ol>
+        <figure>
+          <span class="selo-anim">Animação</span>
+          <div class="quadro"><img src="img/anim-criacao-rapida.webp" width="1100" height="684" alt="Animação: clique no dia 19, digitação do nome, escolha do tipo e evento publicado"></div>
+        </figure>
+        <figure class="estreita">
+          <a class="quadro" href="img/criacao-rapida.webp" target="_blank" rel="noopener"><img src="img/criacao-rapida.webp" width="1208" height="808" alt="Quadro de criação rápida aberto"></a>
+          <ol class="legenda">
+            <li><b>A</b><span>Nome do evento.</span></li>
+            <li><b>B</b><span>Tipo (define a cor).</span></li>
+            <li><b>C</b><span>Local e repetição.</span></li>
+            <li><b>D</b><span><strong>Mais opções</strong> abre a tela completa com a data já preenchida.</span></li>
+          </ol>
+        </figure>
+      </div>
+
+      <div class="sub" id="arrastar">
+        <h3>Arrastar para mudar a data</h3>
+        <p>O evento mudou de dia? Arraste-o até a nova data. O horário e a duração continuam iguais.</p>
+        <figure>
+          <span class="selo-anim">Animação</span>
+          <div class="quadro"><img src="img/anim-arrastar.webp" width="1100" height="684" alt="Animação: evento arrastado do dia 19 para o dia 20"></div>
+        </figure>
+        <div class="nota"><strong>E os eventos que se repetem?</strong><p>Eles não são arrastados, para não bagunçar a série. Para mudar só uma data, use <strong>Alterar</strong> na tela do evento (<a href="#excecoes">capítulo 3</a>).</p></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="duplicar">
+      <h2><small>07</small>Duplicar, rascunho e agendar</h2>
+      <p>Evento parecido com um anterior? Em <strong>Todos os eventos</strong>, passe o mouse sobre ele e clique em <strong>Duplicar</strong>. Abre uma cópia em rascunho: troque a data e publique.</p>
+      <figure>
+        <a class="quadro" href="img/lista-eventos.webp" target="_blank" rel="noopener"><img src="img/lista-eventos.webp" width="1600" height="630" alt="Lista de eventos com a ação Duplicar"></a>
+        <ol class="legenda">
+          <li><b>A</b><span><strong>Duplicar</strong> aparece junto de Editar e Lixeira.</span></li>
+          <li><b>B</b><span>A coluna <strong>Quando</strong> mostra a data do evento (e a próxima, nos recorrentes). Clique no título da coluna para ordenar.</span></li>
+        </ol>
+      </figure>
+      <ul>
+        <li><strong>Salvar como rascunho</strong> guarda sem publicar. No calendário do painel o rascunho aparece listrado.</li>
+        <li><strong>Agendar</strong>: no quadro Publicar, clique em <em>Editar</em> ao lado de “Publicar imediatamente” e escolha dia e hora. O evento entra no site sozinho.</li>
+        <li>Evento que já passou não precisa ser apagado: ele vai para a aba <strong>Anteriores</strong> da agenda.</li>
+      </ul>
+    </section>
+
+    <!-- 8 -->
+    <section id="locais">
+      <h2><small>08</small>Locais, tipos e núcleos</h2>
+      <p>São as listas que deixam o cadastro rápido. Arrume uma vez e use sempre.</p>
+      <div class="dupla">
+        <figure>
+          <a class="quadro" href="img/locais.webp" target="_blank" rel="noopener"><img src="img/locais.webp" width="1600" height="1076" alt="Tela de locais salvos com campos de endereço e cidade"></a>
+          <figcaption><strong>Eventos › Locais salvos</strong>: nome, endereço (A) e cidade. Mudou o endereço? Corrija aqui e todos os eventos desse local se atualizam (B).</figcaption>
+        </figure>
+        <figure id="tipos-nucleos">
+          <a class="quadro" href="img/tipos.webp" target="_blank" rel="noopener"><img src="img/tipos.webp" width="1600" height="988" alt="Tela de tipos de evento com a cor de cada tipo"></a>
+          <figcaption><strong>Eventos › Tipos</strong>: cada tipo tem uma cor (A), que aparece na capa, na etiqueta e no calendário (B). Os <strong>Núcleos</strong> funcionam igual e podem ter o link da página do grupo.</figcaption>
+        </figure>
+      </div>
+      <div class="nota"><strong>Escolha cores bem diferentes</strong><p>Assim o visitante reconhece o tipo de evento no calendário só de bater o olho. O site escurece a cor sozinho quando precisa, para o texto continuar legível.</p></div>
+    </section>
+
+    <!-- 9 -->
+    <section id="no-site">
+      <h2><small>09</small>O que o visitante vê</h2>
+      <p>A agenda do site tem duas formas de ver, busca e filtros. Tudo funciona sem recarregar a página.</p>
+      <figure>
+        <a class="quadro" href="img/site-agenda.webp" target="_blank" rel="noopener"><img src="img/site-agenda.webp" width="1600" height="1638" alt="Agenda no site com destaque do próximo evento e cards"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Lista ou Calendário.</span></li>
+          <li><b>B</b><span>Busca por nome, local ou assunto.</span></li>
+          <li><b>C</b><span>Filtro por tipo (e por núcleo, ao lado da busca).</span></li>
+          <li><b>D</b><span><strong>Próximos</strong> e <strong>Anteriores</strong>, com a quantidade de cada.</span></li>
+          <li><b>E</b><span>O próximo evento ganha destaque, com contagem de dias e botão de inscrição.</span></li>
+        </ol>
+      </figure>
+
+      <div class="dupla">
+        <figure>
+          <a class="quadro" href="img/site-calendario.webp" target="_blank" rel="noopener"><img src="img/site-calendario.webp" width="1600" height="1294" alt="Calendário mensal do site"></a>
+          <figcaption><strong>Calendário mensal</strong>, com um mini card por evento e os feriados nacionais marcados.</figcaption>
+        </figure>
+        <figure>
+          <a class="quadro" href="img/site-modal.webp" target="_blank" rel="noopener"><img src="img/site-modal.webp" width="1400" height="984" alt="Resumo do evento aberto sobre o calendário"></a>
+          <figcaption>Clicou num evento do calendário? Abre um <strong>resumo</strong> com data, local, inscrição e “Adicionar à agenda”.</figcaption>
+        </figure>
+      </div>
+
+      <figure>
+        <a class="quadro" href="img/site-evento.webp" target="_blank" rel="noopener"><img src="img/site-evento.webp" width="1600" height="2440" alt="Página completa do evento"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Data e horário sempre visíveis ao lado do texto.</span></li>
+          <li><b>B</b><span>Botão <strong>Inscrever-se</strong>, com o link do passo 4.</span></li>
+          <li><b>C</b><span>Adicionar ao Google Agenda, Outlook ou celular (.ics).</span></li>
+          <li><b>D</b><span>A programação, linha por linha.</span></li>
+        </ol>
+      </figure>
+
+      <div class="dupla">
+        <figure>
+          <a class="quadro" href="img/site-proximas-datas.webp" target="_blank" rel="noopener"><img src="img/site-proximas-datas.webp" width="1600" height="471" alt="Próximas datas de um evento recorrente"></a>
+          <figcaption>Nos eventos que se repetem, a página mostra as <strong>próximas datas</strong>, com as alteradas e as canceladas.</figcaption>
+        </figure>
+        <figure>
+          <a class="quadro" href="img/site-home.webp" target="_blank" rel="noopener"><img src="img/site-home.webp" width="1600" height="649" alt="Bloco de próximos eventos na página inicial"></a>
+          <figcaption>Bloco de <strong>próximos eventos</strong> para a página inicial ou a página de um núcleo.</figcaption>
+        </figure>
+      </div>
+
+      <div class="sub">
+        <h3>No celular</h3>
+        <p>O calendário vira uma lista por dia, mais fácil de ler na tela pequena.</p>
+        <div class="dupla dupla--celular">
+          <figure><a class="quadro" href="img/site-agenda-celular.webp" target="_blank" rel="noopener"><img src="img/site-agenda-celular.webp" width="780" height="3020" alt="Agenda no celular" loading="lazy"></a><figcaption>Lista</figcaption></figure>
+          <figure><a class="quadro" href="img/site-calendario-celular.webp" target="_blank" rel="noopener"><img src="img/site-calendario-celular.webp" width="764" height="2802" alt="Calendário no celular" loading="lazy"></a><figcaption>Calendário</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3>Colocar a agenda numa página</h3>
+        <p>Edite a página <strong>Agenda</strong> do site e cole o código abaixo onde a agenda deve aparecer (num bloco de texto ou “Código curto”):</p>
+        <p><code>[jpx_agenda]</code></p>
+        <p>Para a página inicial, use <code>[jpx_eventos quantidade="4"]</code>. Mais opções estão em <a href="#implantacao">Para a agência</a>.</p>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="configuracoes">
+      <h2><small>10</small>Configurações</h2>
+      <p>Em <strong>Eventos › Configurações</strong> ficam as cores, a página da agenda e o local que já vem marcado em todo evento novo.</p>
+      <figure>
+        <a class="quadro" href="img/configuracoes.webp" target="_blank" rel="noopener"><img src="img/configuracoes.webp" width="1600" height="572" alt="Configurações de identidade visual com prévia"></a>
+        <ol class="legenda">
+          <li><b>A</b><span>Cor principal: botões, destaques e o tipo “Palestra”.</span></li>
+          <li><b>B</b><span><strong>Do seu tema</strong>: clique num quadradinho para usar uma cor que o site já tem.</span></li>
+          <li><b>C</b><span>A prévia muda enquanto você escolhe. Clique em <strong>Salvar alterações</strong> no fim da página.</span></li>
+        </ol>
+      </figure>
+      <ul>
+        <li><strong>Página da agenda</strong>: para onde levam os links “Agenda completa”.</li>
+        <li><strong>Local padrão</strong>: economiza um clique em todo evento novo.</li>
+        <li><strong>Feriados</strong>: mostra ou esconde os feriados nacionais no calendário.</li>
+      </ul>
+    </section>
+
+    <!-- 11 -->
+    <section id="perguntas">
+      <h2><small>11</small>Perguntas frequentes</h2>
+      <div>
+        <details class="pergunta"><summary>Publiquei e o evento não aparece no site.</summary><p>Confira três coisas: o evento está <strong>Publicado</strong> (não em rascunho), a data é de hoje em diante (eventos passados ficam em Anteriores) e o filtro da agenda está em “Todos”. Se o site usa cache, a página pode levar alguns minutos para atualizar.</p></details>
+        <details class="pergunta"><summary>Como mudo o horário de uma reunião só neste mês?</summary><p>Abra o evento, vá em Repetição, clique em <strong>Alterar</strong> na data, informe o novo horário e clique em <strong>Atualizar</strong>.</p></details>
+        <details class="pergunta"><summary>Preciso apagar os eventos que já aconteceram?</summary><p>Não. Eles vão sozinhos para a aba Anteriores e continuam úteis para quem procura o histórico.</p></details>
+        <details class="pergunta"><summary>O botão de inscrição sumiu.</summary><p>Ele some quando o evento termina, ou quando o campo de link de inscrição está vazio.</p></details>
+        <details class="pergunta"><summary>Errei o local em vários eventos.</summary><p>Se o local é um dos salvos, corrija em Eventos › Locais salvos: todos os eventos com aquele local se atualizam de uma vez.</p></details>
+        <details class="pergunta"><summary>Posso deixar alguém da equipe só cadastrando eventos?</summary><p>Sim. Um usuário com perfil <em>Editor</em> ou <em>Autor</em> no WordPress consegue cadastrar e publicar eventos. Peça à agência para criar o acesso.</p></details>
+        <details class="pergunta"><summary>Como o associado coloca a agenda no celular dele?</summary><p>Na página de cada evento há “Adicionar à agenda”. Para assinar a agenda inteira, envie o link que fica em Configurações › Shortcodes (termina em <code>?jpx_ics=agenda</code>).</p></details>
+      </div>
+    </section>
+
+    <!-- Anexo -->
+    <section id="implantacao">
+      <h2><small>+</small>Para a agência: implantação</h2>
+      <ol class="passos">
+        <li><div><strong>Instale o plugin</strong>Plugins › Adicionar novo › Enviar plugin › <code>jpx-eventos.zip</code> › Ativar. Se o site tinha o “Eventos JPX” antigo, ele é desativado sozinho e os eventos são aproveitados, com cópia de segurança.</div></li>
+        <li><div><strong>Identidade</strong>Em Configurações, defina as cores (os quadradinhos “Do seu tema” ajudam) e, se quiser, as fontes que o tema já carrega.</div></li>
+        <li><div><strong>Listas</strong>Cadastre os locais, revise os tipos e as cores e crie os núcleos (o nome “Núcleo” pode virar “Comissão” ou “Setor” nas Configurações).</div></li>
+        <li><div><strong>Páginas</strong>Coloque <code>[jpx_agenda]</code> na página da agenda e escolha essa página em Configurações. Na home, use <code>[jpx_eventos]</code>.</div></li>
+        <li><div><strong>Construtores (Divi, Elementor)</strong>Se a página do evento for um template do construtor, use <code>[jpx_evento]</code> nele e marque <em>Página do evento: Manual</em>. Caso contrário, deixe em Automática.</div></li>
+      </ol>
+      <div class="tabela">
+        <table>
+          <thead><tr><th>Código</th><th>O que faz</th><th>Opções úteis</th></tr></thead>
+          <tbody>
+            <tr><td><code>[jpx_agenda]</code></td><td>Agenda completa: lista, calendário, busca e filtros.</td><td><code>cabecalho="nao"</code> <code>titulo="…"</code> <code>descricao="…"</code> <code>visao="calendario"</code> <code>tipo="slug"</code> <code>nucleo="slug"</code></td></tr>
+            <tr><td><code>[jpx_calendario]</code></td><td>Só o calendário mensal.</td><td><code>tipo</code> <code>nucleo</code> <code>filtros="sim"</code></td></tr>
+            <tr><td><code>[jpx_eventos]</code></td><td>Próximos eventos em cards ou lista (home, núcleos).</td><td><code>quantidade="4"</code> <code>layout="compacto"</code> <code>nucleo="slug"</code> <code>agrupar="nao"</code> <code>se_vazio="mensagem"</code></td></tr>
+            <tr><td><code>[jpx_evento]</code></td><td>Página do evento completa para templates.</td><td><code>id="123"</code></td></tr>
+            <tr><td><code>[lista_eventos]</code> <code>[eventos_home]</code> <code>[evento_detalhe]</code></td><td>Códigos da versão 1.x, que continuam funcionando.</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="rodape">JPX Eventos · Jotapix Agência Criativa · Guia da versão 2.1</p>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Destaca no índice o capítulo que está na tela.
+  var links = Array.prototype.slice.call(document.querySelectorAll('.indice a'));
+  var alvos = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  function marcar() {
+    var atual = 0, limite = window.innerHeight * 0.3;
+    alvos.forEach(function (s, i) { if (s && s.getBoundingClientRect().top <= limite) { atual = i; } });
+    links.forEach(function (a, i) { a.setAttribute('aria-current', i === atual ? 'true' : 'false'); });
+  }
+  var pendente = false;
+  window.addEventListener('scroll', function () { if (!pendente) { pendente = true; requestAnimationFrame(function () { pendente = false; marcar(); }); } }, { passive: true });
+  marcar();
+  // No celular, fechar o índice depois de escolher um capítulo.
+  var det = document.querySelector('.indice details');
+  links.forEach(function (a) { a.addEventListener('click', function () { if (window.matchMedia('(max-width:960px)').matches && det) { det.open = false; } }); });
+  if (window.matchMedia('(max-width:960px)').matches && det) { det.open = false; }
+})();
+</script>
+
+</body>
+</html>
